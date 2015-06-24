@@ -36,3 +36,12 @@ if yes?("Do you want to use Bootstrap? ")
   insert_into_file("app/assets/javascripts/application.js", "//= require bootstrap-sprockets\n",
                    after: "//= require jquery\n")
 end
+
+if yes?("Do you want to use React? ")
+  gem 'react-rails'
+  run 'rails g react:install'
+end
+
+if yes?("Do you want to use bcrypt? ")
+  gem 'bcrypt'
+end
