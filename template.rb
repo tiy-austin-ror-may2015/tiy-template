@@ -15,6 +15,9 @@ insert_into_file "config/application.rb", "config.time_zone = 'Central Time (US 
 gem 'pg'
 gem 'puma'
 
+# Add Figaro (https://github.com/laserlemon/figaro)
+gem 'figaro'
+
 gem_group :production do
   gem 'rails_12factor'
 end
@@ -24,6 +27,18 @@ gem_group :development, :test do
   gem 'faker'
 end
 
+# Bullet Gem  (https://github.com/flyerhzm/bullet)
+gem 'bullet', group: :development
+insert_into_file('config/environments/development.rb', """
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.console = true
+    Bullet.rails_logger = true
+    #Bullet.add_footer = true
+  end
+""", after: "   # config.action_view.raise_on_missing_translations = true")
+
+# Readme
 run "rm README.rdoc"
 run "touch README.md"
 
@@ -38,10 +53,18 @@ if yes?("Do you want to use Bootstrap? ")
 end
 
 if yes?("Do you want to use React? ")
+  @react = true
   gem 'react-rails'
-  run 'rails g react:install'
 end
 
 if yes?("Do you want to use bcrypt? ")
   gem 'bcrypt'
 end
+
+
+after_bundle do
+  run 'rails g react:install' if @react
+  run 'figaro install'
+  puts "Be sure to put all your API keys, tokens, and other secrets inside of config/application.yml"
+end
+
